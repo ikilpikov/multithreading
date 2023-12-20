@@ -2,10 +2,10 @@ package ticket;
 
 public class Ticket {
     private final String name;
-    private final double sum;
+    private final long sum;
     private final OperationType operationType;
 
-    public Ticket(String name, double sum, OperationType operationType) {
+    public Ticket(String name, long sum, OperationType operationType) {
         this.name = name;
         this.sum = sum;
         this.operationType = operationType;
@@ -15,7 +15,7 @@ public class Ticket {
         return name;
     }
 
-    public double getSum() {
+    public long getSum() {
         return sum;
     }
 

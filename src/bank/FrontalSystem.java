@@ -2,44 +2,35 @@ package bank;
 
 import ticket.Ticket;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 
 public class FrontalSystem {
-    private Queue<Ticket> tickets;
+    /**
+     * Требуется коллекция с механизмом доступа FIFO и
+     * возможностью блокировки, берем BlockingQueue
+     */
+    private BlockingQueue<Ticket> tickets;
 
-    public FrontalSystem() {
-        tickets = new ArrayDeque<Ticket>();
+    public FrontalSystem(int size) {
+        tickets = new ArrayBlockingQueue<>(size);
     }
 
     public void addTicket(Ticket ticket) {
-        synchronized (this) {
-            while (tickets.size() >= 2) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
+        try {
             tickets.add(ticket);
-            notifyAll();
+        } catch (IllegalStateException e) {
+
         }
+
     }
 
     public Ticket getTicket() {
-        synchronized (this) {
-            while (tickets.size() == 0) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            Ticket ticket = tickets.poll();
-            notifyAll();
-            return ticket;
+        try {
+            return tickets.take();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

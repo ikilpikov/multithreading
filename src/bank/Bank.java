@@ -2,26 +2,32 @@ package bank;
 
 import ticket.Ticket;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class Bank {
-    private volatile double balance;
+    private AtomicLong balance;
 
-    public double getBalance() {
-        return balance;
+    public long getBalance() {
+        return balance.get();
     }
 
-    public Bank(double balance) {
-        this.balance = balance;
+    public Bank(long balance) {
+        this.balance = new AtomicLong(balance);
     }
 
-    public synchronized void increaseBalance(Ticket ticket) {
-        balance += ticket.getSum();
+    public void increaseBalance(long sum) {
+        balance.addAndGet(sum);
+    }
+
+    public void increaseBalance(Ticket ticket) {
+        balance.addAndGet(ticket.getSum());
         showSucessfulResult(ticket);
     }
 
-    public synchronized void decreaseBalance(Ticket ticket) {
-        double sum = ticket.getSum();
-        if (balance >= sum) {
-            balance -= sum;
+    public void decreaseBalance(Ticket ticket) {
+        long sum = ticket.getSum();
+        if (balance.get() >= sum) {
+            balance.updateAndGet(x -> x - sum);
             showSucessfulResult(ticket);
         }
 
