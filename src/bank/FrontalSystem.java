@@ -19,8 +19,8 @@ public class FrontalSystem {
 
     public void addTicket(Ticket ticket) {
         try {
-            tickets.add(ticket);
-        } catch (IllegalStateException e) {
+            tickets.put(ticket);
+        } catch (Exception e) {
 
         }
 
